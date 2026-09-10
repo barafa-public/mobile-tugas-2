@@ -76,6 +76,7 @@ void main() {
         pause();
         break;
       case '4':
+      cekGanjilGenap();
         pause();
         break;
       case '5':
@@ -135,6 +136,36 @@ void tampilkanSumHimpunanAngka() {
     print("input tidak boleh mengandung huruf");
   }
 }
+// FUNGSI 4: Mengecek Input Bilangan Ganjil atau Genap
+// =========================================================
+void cekGanjilGenap() {
+  print("\n----- CEK BILANGAN GANJIL / GENAP -----");
+
+  stdout.write("Masukkan sebuah angka: ");
+  String? raw = stdin.readLineSync();
+
+  if (raw == null || raw.trim().isEmpty) {
+    print("Input tidak boleh kosong!\n");
+    cekGanjilGenap();
+    return;
+  }
+
+  try {
+    int angka = int.parse(raw.trim());
+
+    if (angka % 2 == 0) {
+      print("$angka adalah bilangan GENAP.");
+    } else {
+      print("$angka adalah bilangan GANJIL.");
+    }
+  } catch (_) {
+    print("Input tidak valid! Harap masukkan angka bulat.");
+  }
+
+  print("----------------------------------------\n");
+}
+// FUNGSI Pause & Clean Terminal
+// =========================================================
 void pause() {
   stdout.write('\nTekan Enter untuk kembali ke menu...');
   stdin.readLineSync();
