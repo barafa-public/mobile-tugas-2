@@ -112,6 +112,12 @@ void tampilkanSumHimpunanAngka() {
     return;
   }
 
+  if (raw.split("").any((c) => c == " ")) {
+    print("input tidak boleh mengandung spasi!");
+    tampilkanSumHimpunanAngka();
+
+    return;
+  }
   var sum = raw
       .split(",")
       .map((String s) => int.parse(s))
