@@ -74,6 +74,7 @@ void main() {
         pause();
         break;
       case '3':
+        hitungKaliBagi();
         pause();
         break;
       case '4':
@@ -165,6 +166,11 @@ class BigDecimal {
     return BigDecimal(a.unscaled - b.unscaled, maxScale);
   }
 
+    // Perkalian: unscaled dikalikan langsung, scale dijumlahkan
+  BigDecimal operator *(BigDecimal other) {
+    return BigDecimal(unscaled * other.unscaled, scale + other.scale);
+  }
+
   @override
   String toString() {
     String sign = unscaled.isNegative ? '-' : '';
@@ -218,6 +224,46 @@ BigDecimal? parseInputAngka(String raw, {required String label}) {
   return BigDecimal(unscaled, fracPart.length);
 }
 
+// ===== FUNGSI PEMBAGIAN DENGAN PRESISI (long division manual pakai BigInt) =====
+// Dibuat terpisah dari operator BigDecimal karena hasil bagi bisa tidak
+// berhenti (misal 1/3), jadi kita batasi jumlah digit desimal (presisi).
+String bagiDenganPresisi(BigDecimal a, BigDecimal b, {int presisi = 10}) {
+  if (b.unscaled == BigInt.zero) {
+    throw Exception('Pembagian dengan nol tidak diperbolehkan');
+  }
+
+  BigInt numerator = a.unscaled * BigInt.from(10).pow(b.scale);
+  BigInt denominator = b.unscaled * BigInt.from(10).pow(a.scale);
+
+  bool negatif = numerator.isNegative != denominator.isNegative;
+  numerator = numerator.abs();
+  denominator = denominator.abs();
+
+  BigInt bagianBulat = numerator ~/ denominator;
+  BigInt sisa = numerator % denominator;
+
+  StringBuffer desimal = StringBuffer();
+  for (int i = 0; i < presisi && sisa != BigInt.zero; i++) {
+    sisa *= BigInt.from(10);
+    desimal.write((sisa ~/ denominator).toString());
+    sisa = sisa % denominator;
+  }
+
+  bool masihAdaSisa = sisa != BigInt.zero;
+  String hasil = bagianBulat.toString();
+  if (desimal.isNotEmpty) {
+    hasil += '.${desimal.toString()}';
+  }
+  if (masihAdaSisa) {
+    hasil += '...'; // menandakan hasil dipotong, bukan pas
+  }
+
+  bool hasilNolMurni = bagianBulat == BigInt.zero &&
+      desimal.toString().replaceAll('0', '').isEmpty;
+
+  return (negatif && !hasilNolMurni) ? '-$hasil' : hasil;
+}
+
 // FUNGSI 2: Penjumlahan dan Pengurangan Angka
 // =========================================================
 void hitungTambahKurang() {
@@ -250,6 +296,46 @@ void hitungTambahKurang() {
 
   print("\nHasil penjumlahan: $angka1 + $angka2 = $hasilTambah");
   print("Hasil pengurangan: $angka1 - $angka2 = $hasilKurang");
+  print("----------------------------------------\n");
+}
+
+// FUNGSI 3: Perkalian dan Pembagian Angka
+// =========================================================
+void hitungKaliBagi() {
+  print("\n----- PERKALIAN DAN PEMBAGIAN ANGKA -----");
+
+  BigDecimal? angka1;
+  while (angka1 == null) {
+    stdout.write("Masukkan angka pertama: ");
+    String? raw1 = stdin.readLineSync();
+    if (raw1 == null) {
+      print("Input tidak terbaca, coba lagi.");
+      continue;
+    }
+    angka1 = parseInputAngka(raw1, label: "Angka pertama");
+  }
+
+  BigDecimal? angka2;
+  while (angka2 == null) {
+    stdout.write("Masukkan angka kedua: ");
+    String? raw2 = stdin.readLineSync();
+    if (raw2 == null) {
+      print("Input tidak terbaca, coba lagi.");
+      continue;
+    }
+    angka2 = parseInputAngka(raw2, label: "Angka kedua");
+  }
+
+  BigDecimal hasilKali = angka1 * angka2;
+  print("\nHasil perkalian: $angka1 x $angka2 = $hasilKali");
+
+  try {
+    String hasilBagi = bagiDenganPresisi(angka1, angka2);
+    print("Hasil pembagian: $angka1 : $angka2 = $hasilBagi");
+  } catch (e) {
+    print("Hasil pembagian: tidak bisa dibagi nol (pembagi = 0).");
+  }
+
   print("----------------------------------------\n");
 }
 
