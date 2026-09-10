@@ -6,7 +6,7 @@ void main() {
     {"username": "Robi", "password": "1242400"},
     {"username": "Angga", "password": "124240065"},
     {"username": "Khrisna", "password": "1242400"},
-    {"username": "Faris", "password": "1242400139"},
+    {"username": "Faris", "password": "124240139"},
   ];
 
   bool isLoggedIn = false;
