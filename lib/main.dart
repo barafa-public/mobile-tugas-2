@@ -78,7 +78,7 @@ void main() {
         pause();
         break;
       case '4':
-      cekGanjilGenap();
+        cekGanjilGenap();
         pause();
         break;
       case '5':
@@ -105,41 +105,6 @@ void tampilkanDataKelompok(List<Map<String, String>> groupData) {
   }
   print("--------------------------\n");
 }
-
-void tampilkanSumHimpunanAngka() {
-  print("\n----- SUM HIMPUNAN ANGKA -----");
-
-  print("\n");
-
-  stdout.write("tuliskan himpunan angka dipisah dengan koma: ");
-  String? raw = stdin.readLineSync();
-
-  if (raw == null || raw == "") {
-    print("input tidak boleh kosong!\n\n");
-    tampilkanSumHimpunanAngka();
-    return;
-  }
-
-  if (raw.split("").any((c) => c == " ")) {
-    print("input tidak boleh mengandung spasi!");
-    tampilkanSumHimpunanAngka();
-
-    return;
-  }
-
-  try {
-    var sum = raw
-        .split(",")
-        .map((String s) => int.parse(s))
-        .reduce((value, element) => value + element);
-
-    print("hasil penjumlahan adalah: $sum");
-  } catch (_) {
-    print("input tidak boleh mengandung huruf");
-  }
-}
-
-
 
 // FUNGSI 2: Penjumlahan dan Pengurangan Angka
 // =========================================================
@@ -233,6 +198,42 @@ void cekGanjilGenap() {
 
   print("----------------------------------------\n");
 }
+
+// FUNGSI 5: Menampilkan Sum Himpunan Angka
+// =========================================================
+void tampilkanSumHimpunanAngka() {
+  print("\n----- SUM HIMPUNAN ANGKA -----");
+
+  print("\n");
+
+  stdout.write("tuliskan himpunan angka dipisah dengan koma: ");
+  String? raw = stdin.readLineSync();
+
+  if (raw == null || raw == "") {
+    print("input tidak boleh kosong!\n\n");
+    tampilkanSumHimpunanAngka();
+    return;
+  }
+
+  if (raw.split("").any((c) => c == " ")) {
+    print("input tidak boleh mengandung spasi!");
+    tampilkanSumHimpunanAngka();
+
+    return;
+  }
+
+  try {
+    var sum = raw
+        .split(",")
+        .map((String s) => int.parse(s))
+        .reduce((value, element) => value + element);
+
+    print("hasil penjumlahan adalah: $sum");
+  } catch (_) {
+    print("input tidak boleh mengandung huruf");
+  }
+}
+
 // FUNGSI Pause & Clean Terminal
 // =========================================================
 void pause() {
