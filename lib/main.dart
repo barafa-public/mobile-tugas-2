@@ -70,6 +70,7 @@ void main() {
         pause();
         break;
       case '2':
+        hitungTambahKurang();
         pause();
         break;
       case '3':
@@ -136,6 +137,122 @@ void tampilkanSumHimpunanAngka() {
     print("input tidak boleh mengandung huruf");
   }
 }
+
+// ===== KELAS BANTU: BigDecimal (angka besar + desimal, presisi penuh) =====
+class BigDecimal {
+  final BigInt unscaled; // digit-digit angka (tanpa titik), termasuk tanda
+  final int scale;       // jumlah digit di belakang koma
+
+  BigDecimal(this.unscaled, this.scale);
+
+  BigDecimal _rescale(int newScale) {
+    if (newScale == scale) return this;
+    final diff = newScale - scale;
+    return BigDecimal(unscaled * BigInt.from(10).pow(diff), newScale);
+  }
+
+  BigDecimal operator +(BigDecimal other) {
+    final maxScale = scale > other.scale ? scale : other.scale;
+    final a = _rescale(maxScale);
+    final b = other._rescale(maxScale);
+    return BigDecimal(a.unscaled + b.unscaled, maxScale);
+  }
+
+  BigDecimal operator -(BigDecimal other) {
+    final maxScale = scale > other.scale ? scale : other.scale;
+    final a = _rescale(maxScale);
+    final b = other._rescale(maxScale);
+    return BigDecimal(a.unscaled - b.unscaled, maxScale);
+  }
+
+  @override
+  String toString() {
+    String sign = unscaled.isNegative ? '-' : '';
+    String s = unscaled.abs().toString();
+
+    if (scale == 0) return '$sign$s';
+
+    while (s.length <= scale) {
+      s = '0$s';
+    }
+
+    String intPart = s.substring(0, s.length - scale);
+    String fracPart = s.substring(s.length - scale);
+    fracPart = fracPart.replaceAll(RegExp(r'0+$'), ''); // buang nol trailing
+
+    return fracPart.isEmpty ? '$sign$intPart' : '$sign$intPart.$fracPart';
+  }
+}
+
+// ===== FUNGSI PARSING INPUT =====
+BigDecimal? parseInputAngka(String raw, {required String label}) {
+  String trimmed = raw.trim();
+
+  if (trimmed.isEmpty) {
+    print("$label tidak boleh kosong!");
+    return null;
+  }
+
+  if (trimmed.contains(' ')) {
+    print("$label tidak boleh mengandung spasi!");
+    return null;
+  }
+
+  // format: tanda opsional, digit wajib, lalu opsional (titik/koma + digit)
+  final match = RegExp(r'^([+-]?)(\d+)([.,](\d+))?$').firstMatch(trimmed);
+
+  if (match == null) {
+    print("$label tidak valid! Format yang diterima: bilangan bulat atau desimal, "
+        "boleh diawali + atau -, contoh: 123, -45, 3.14, 7,25. "
+        "(Pastikan hanya ada satu tanda titik/koma sebagai pemisah desimal.)");
+    return null;
+  }
+
+  String signStr = match.group(1) ?? '';
+  String intPart = match.group(2)!;
+  String fracPart = match.group(4) ?? '';
+
+  BigInt unscaled = BigInt.parse(intPart + fracPart);
+  if (signStr == '-') unscaled = -unscaled;
+
+  return BigDecimal(unscaled, fracPart.length);
+}
+
+// FUNGSI 2: Penjumlahan dan Pengurangan Angka
+// =========================================================
+void hitungTambahKurang() {
+  print("\n----- PENJUMLAHAN DAN PENGURANGAN ANGKA -----");
+
+  BigDecimal? angka1;
+  while (angka1 == null) {
+    stdout.write("Masukkan angka pertama: ");
+    String? raw1 = stdin.readLineSync();
+    if (raw1 == null) {
+      print("Input tidak terbaca, coba lagi.");
+      continue;
+    }
+    angka1 = parseInputAngka(raw1, label: "Angka pertama");
+  }
+
+  BigDecimal? angka2;
+  while (angka2 == null) {
+    stdout.write("Masukkan angka kedua: ");
+    String? raw2 = stdin.readLineSync();
+    if (raw2 == null) {
+      print("Input tidak terbaca, coba lagi.");
+      continue;
+    }
+    angka2 = parseInputAngka(raw2, label: "Angka kedua");
+  }
+
+  BigDecimal hasilTambah = angka1 + angka2;
+  BigDecimal hasilKurang = angka1 - angka2;
+
+  print("\nHasil penjumlahan: $angka1 + $angka2 = $hasilTambah");
+  print("Hasil pengurangan: $angka1 - $angka2 = $hasilKurang");
+  print("----------------------------------------\n");
+}
+
 // FUNGSI 4: Mengecek Input Bilangan Ganjil atau Genap
 // =========================================================
 void cekGanjilGenap() {
