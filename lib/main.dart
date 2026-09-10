@@ -118,10 +118,15 @@ void tampilkanSumHimpunanAngka() {
 
     return;
   }
-  var sum = raw
-      .split(",")
-      .map((String s) => int.parse(s))
-      .reduce((value, element) => value + element);
 
-  print("hasil penjumlahan adalah: $sum");
+  try {
+    var sum = raw
+        .split(",")
+        .map((String s) => int.parse(s))
+        .reduce((value, element) => value + element);
+
+    print("hasil penjumlahan adalah: $sum");
+  } catch (_) {
+    print("input tidak boleh mengandung huruf");
+  }
 }
