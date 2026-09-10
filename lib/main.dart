@@ -6,6 +6,7 @@ void main() {
     {"username": "Robi", "password": "1242400"},
     {"username": "Angga", "password": "124240065"},
     {"username": "Khrisna", "password": "1242400"},
+    {"username": "Faris", "password": "1242400139"},
   ];
 
   bool isLoggedIn = false;
@@ -74,6 +75,7 @@ void main() {
       case '4':
         break;
       case '5':
+        tampilkanSumHimpunanAngka();
         break;
       case '6':
         running = false;
@@ -94,4 +96,26 @@ void tampilkanDataKelompok(List<Map<String, String>> groupData) {
     print('${i + 1}. Username: ${user['username']}');
   }
   print("--------------------------\n");
+}
+
+void tampilkanSumHimpunanAngka() {
+  print("\n----- SUM HIMPUNAN ANGKA -----");
+
+  print("\n");
+
+  stdout.write("tuliskan himpunan angka dipisah dengan koma: ");
+  String? raw = stdin.readLineSync();
+
+  if (raw == null || raw == "") {
+    print("input tidak boleh kosong!\n\n");
+    tampilkanSumHimpunanAngka();
+    return;
+  }
+
+  var sum = raw
+      .split(",")
+      .map((String s) => int.parse(s))
+      .reduce((value, element) => value + element);
+
+  print("hasil penjumlahan adalah: $sum");
 }
