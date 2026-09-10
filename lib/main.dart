@@ -67,15 +67,20 @@ void main() {
     switch (pilihan) {
       case '1':
         tampilkanDataKelompok(groupData);
+        pause();
         break;
       case '2':
+        pause();
         break;
       case '3':
+        pause();
         break;
       case '4':
+        pause();
         break;
       case '5':
         tampilkanSumHimpunanAngka();
+        pause();
         break;
       case '6':
         running = false;
@@ -129,4 +134,13 @@ void tampilkanSumHimpunanAngka() {
   } catch (_) {
     print("input tidak boleh mengandung huruf");
   }
+}
+void pause() {
+  stdout.write('\nTekan Enter untuk kembali ke menu...');
+  stdin.readLineSync();
+  clearScreen();
+}
+
+void clearScreen() {
+  stdout.write('\x1B[2J\x1B[3J\x1B[H');
 }
